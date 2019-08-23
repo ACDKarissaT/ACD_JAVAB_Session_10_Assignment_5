@@ -57,17 +57,15 @@ and (2019 - album.album_year) < 20
 and album_rating > 3;
 
 -- 6)
-select song.track_album_id, album.album_year, avg(song.track_length) as 'album_length'
-from tracks song, albums album, (
-	select track_album_id, count(distinct track_id) as 'counts'
+select sum(total_length) / count(*) as 'avg_album_length'
+from albums album, (
+	select track_album_id, sum(track_length) as 'total_length', count(distinct track_id) as 'counts'
 		from tracks
 		group by track_album_id
 		having count(distinct track_id) > 9 ) more9
-where song.track_album_id = album.album_id
-and song.track_album_id = more9.track_album_id
+where album.album_id = more9.track_album_id
 and album.album_year > 1989
-and album.album_year < 2000
-group by song.track_album_id;
+and album.album_year < 2000;
 
 -- 7)
 SELECT artists.artist_id, artists.artist_name
